@@ -1,0 +1,17 @@
+#!/bin/bash
+# Mock pgrep
+# Usage: MOCK_PGREP_MATCH="wayfire" ./script.sh
+
+ARGS="$@"
+
+# If we haven't set what to match, default to acting like nothing is running
+if [ -z "$MOCK_PGREP_MATCH" ]; then
+    exit 1
+fi
+
+# Simple check: if the arguments contain the string we want to match
+if [[ "$ARGS" == *"$MOCK_PGREP_MATCH"* ]]; then
+    exit 0
+else
+    exit 1
+fi

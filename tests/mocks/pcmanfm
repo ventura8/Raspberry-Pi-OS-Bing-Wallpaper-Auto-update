@@ -1,0 +1,6 @@
+#!/bin/bash
+# Mock pcmanfm
+# Logs arguments to a file so we can check if it was called
+
+echo "pcmanfm called with: $*" >> "$HOME/pcmanfm.log"
+exit 0

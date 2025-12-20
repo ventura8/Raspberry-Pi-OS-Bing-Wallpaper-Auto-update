@@ -1,0 +1,276 @@
+name: "CI Pipeline"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'scripts/**'
+      - 'install.sh'
+      - 'uninstall.sh'
+      - 'tests/**'
+      - 'Dockerfile'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  lint:
+    name: Lint Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+      - name: Run ShellCheck
+        run: shellcheck install.sh uninstall.sh tests/*.sh
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Test Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: wallpaper-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Install Test
+        run: |
+          mkdir -p coverage
+          chmod 777 coverage
+          docker run --rm \
+            --security-opt seccomp=unconfined \
+            --cap-add SYS_PTRACE \
+            -e COVERAGE=1 \
+            -e COVERAGE_OUTPUT=/app/coverage \
+            -v $PWD/coverage:/app/coverage \
+            wallpaper-test ./tests/run_suite.sh --file tests/install_test.bats
+
+      - name: Uninstall Test
+        run: |
+          # Use same coverage dir; kcov tracks separate runs
+          docker run --rm \
+            --security-opt seccomp=unconfined \
+            --cap-add SYS_PTRACE \
+            -e COVERAGE=1 \
+            -e COVERAGE_OUTPUT=/app/coverage \
+            -v $PWD/coverage:/app/coverage \
+            wallpaper-test ./tests/run_suite.sh --file tests/uninstall_test.bats
+
+      - name: Upload Installer Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-installer
+          path: coverage/
+          include-hidden-files: true
+
+  component-tests:
+    name: Component Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Test Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: wallpaper-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Execute Wallpaper Tests
+        run: |
+          mkdir -p coverage
+          chmod 777 coverage
+          docker run --rm \
+            --security-opt seccomp=unconfined \
+            --cap-add SYS_PTRACE \
+            -e COVERAGE=1 \
+            -e COVERAGE_OUTPUT=/app/coverage \
+            -v $PWD/coverage:/app/coverage \
+            wallpaper-test ./tests/run_suite.sh --file tests/bing_wallpaper_test.bats
+
+      - name: Upload Component Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-component
+          path: coverage/
+          include-hidden-files: true
+
+  system-tests:
+    name: System Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Test Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: wallpaper-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Execute E2E Tests
+        run: |
+          mkdir -p coverage
+          chmod 777 coverage
+          docker run --rm \
+            --security-opt seccomp=unconfined \
+            --cap-add SYS_PTRACE \
+            -e COVERAGE=1 \
+            -e COVERAGE_OUTPUT=/app/coverage \
+            -v $PWD/coverage:/app/coverage \
+            wallpaper-test ./tests/run_suite.sh --e2e-only
+
+      - name: Upload System Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-system
+          path: coverage/
+          include-hidden-files: true
+
+  coverage-report:
+    name: Merge & Publish Report
+    runs-on: ubuntu-latest
+    needs: [unit-tests, component-tests, system-tests]
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Test Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: wallpaper-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Download Installer Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-installer
+          path: coverage_inputs/installer
+
+      - name: Download Component Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-component
+          path: coverage_inputs/component
+
+      - name: Download System Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-system
+          path: coverage_inputs/system
+
+      - name: Debug Inputs
+        run: ls -R coverage_inputs
+
+      - name: Merge Coverage Reports
+        run: |
+          mkdir -p coverage/merged
+          chmod 777 coverage/merged
+          
+          # Run kcov --merge inside docker
+          docker run --rm \
+            --security-opt seccomp=unconfined \
+            --cap-add SYS_PTRACE \
+            --user root \
+            -v $PWD:/workdir \
+            -w /workdir \
+            wallpaper-test \
+            kcov --merge coverage/merged \
+                 coverage_inputs/installer/* \
+                 coverage_inputs/component/* \
+                 coverage_inputs/system/*
+
+      - name: Process Coverage XML
+        run: |
+          # Find the merged cobertura.xml
+          MERGED_XML=$(find coverage/merged -name "cobertura.xml" | head -n 1)
+          if [ -f "$MERGED_XML" ]; then
+             echo "Found merged XML at $MERGED_XML"
+             cp "$MERGED_XML" coverage/cobertura.xml
+             
+             # Transform for better reporting
+             python3 tests/transform_coverage.py coverage/cobertura.xml
+          else
+             echo "::error::Merged cobertura.xml not found"
+             exit 1
+          fi
+
+      - name: Upload HTML Report (Artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-coverage-report
+          path: coverage/merged/
+      
+      - name: Validate Coverage
+        id: validate_coverage
+        run: |
+          if [ -f "coverage/cobertura.xml" ]; then
+             echo "valid=true" >> $GITHUB_OUTPUT
+          else
+             echo "valid=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Detailed Summary
+        if: steps.validate_coverage.outputs.valid == 'true'
+        run: |
+          python3 tests/generate_summary.py coverage/cobertura.xml | tee -a $GITHUB_STEP_SUMMARY
+
+      - name: Publish Coverage to Job Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: steps.validate_coverage.outputs.valid == 'true'
+        with:
+          filename: coverage/cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '90 90'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request' && steps.validate_coverage.outputs.valid == 'true'
+        with:
+          recreate: true
+          path: code-coverage-results.md
+
+      - name: Append to Summary
+        if: steps.validate_coverage.outputs.valid == 'true'
+        run: |
+          cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY

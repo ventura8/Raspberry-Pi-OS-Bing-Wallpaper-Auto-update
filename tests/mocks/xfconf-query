@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Mock xfconf-query for testing
+# This mock simulates xfconf-query behavior for XFCE wallpaper testing
+
+# Parse arguments
+CHANNEL=""
+LIST_MODE=false
+PROPERTY=""
+CREATE_MODE=false
+VALUE=""
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -c)
+            shift
+            CHANNEL="$1"
+            ;;
+        -l)
+            LIST_MODE=true
+            ;;
+        -p)
+            shift
+            PROPERTY="$1"
+            ;;
+        -n)
+            CREATE_MODE=true
+            ;;
+        -t)
+            shift
+            # Type argument, ignore
+            ;;
+        -s)
+            shift
+            VALUE="$1"
+            ;;
+    esac
+    shift
+done
+
+# Handle list mode
+if [ "$LIST_MODE" = "true" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
+    if [ "$XDG_CURRENT_DESKTOP" = "XFCE" ]; then
+        if [ "$MOCK_XFCONF_EMPTY" = "true" ]; then
+            # Return nothing to simulate no properties
+            exit 0
+        else
+            # Return mock properties when XFCE is the desktop
+            echo "/backdrop/screen0/monitor0/workspace0/last-image"
+            echo "/backdrop/screen0/monitorHDMI-1/workspace0/last-image"
+        fi
+    fi
+    # Return nothing when XDG_CURRENT_DESKTOP is not XFCE (simulates no properties)
+    exit 0
+fi
+
+# Handle set property mode (existing property)
+if [ -n "$PROPERTY" ] && [ -n "$VALUE" ] && [ "$CREATE_MODE" = "false" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
+    # Simulate setting an existing property
+    exit 0
+fi
+
+# Handle create property mode
+if [ -n "$PROPERTY" ] && [ -n "$VALUE" ] && [ "$CREATE_MODE" = "true" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
+    if [ "$MOCK_XFCONF_FAIL_CREATE" = "true" ]; then
+        exit 1
+    fi
+    # Simulate creating a new property successfully
+    exit 0
+fi
+
+exit 1

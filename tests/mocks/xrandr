@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Mock xrandr for testing
+if [ "$MOCK_XRANDR_FAIL" = "true" ]; then
+    exit 1
+fi
+
+if [ "$1" = "--query" ]; then
+    if [ "$MOCK_XRANDR_EMPTY" = "true" ]; then
+        echo "Screen 0: minimum 8 x 8, current 3840 x 1080, maximum 32767 x 32767"
+        exit 0
+    fi
+    echo "Screen 0: minimum 8 x 8, current 3840 x 1080, maximum 32767 x 32767"
+    echo "HDMI-1 connected primary 1920x1080+0+0 (normal left inverted right x axis y axis) 527mm x 296mm"
+    echo "   1920x1080     60.00*+  50.00    59.94  "
+    echo "DP-1 connected 1920x1080+1920+0 (normal left inverted right x axis y axis) 527mm x 296mm"
+    echo "   1920x1080     60.00*+  50.00  "
+    exit 0
+fi
+
+exit 0
