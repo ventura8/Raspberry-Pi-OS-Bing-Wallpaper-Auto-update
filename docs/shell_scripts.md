@@ -18,15 +18,15 @@ The main wallpaper management script with the following features:
 
 The script uses a dedicated `set_wallpaper()` function to detect the environment and apply changes:
 
-1. **XFCE (Xubuntu)**: 
+1. **XFCE (Xubuntu)**:
    - Detects `XDG_CURRENT_DESKTOP=XFCE` or availability of `xfconf-query`.
    - Uses `xfconf-query` to update `last-image` properties for all monitors/workspaces.
 
-2. **Wayfire (Raspberry Pi OS Bookworm):** 
+2. **Wayfire (Raspberry Pi OS Bookworm):**
    - Detects running `wayfire` process.
    - Updates `~/.config/wayfire.ini` directly.
 
-3. **PCManFM (Raspberry Pi OS Labwc/Legacy):** 
+3. **PCManFM (Raspberry Pi OS Labwc/Legacy):**
    - Primary: Uses `pcmanfm --set-wallpaper` (Legacy/LXDE).
    - Fallback: Uses `pcmanfm --profile labwc --set-wallpaper` (Newer Labwc setups).
 

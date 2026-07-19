@@ -3,18 +3,18 @@
 setup() {
     # Get the project root directory
     PROJECT_ROOT="$( cd "$( dirname "$BATS_TEST_FILENAME" )/.." >/dev/null 2>&1 && pwd )"
-    
+
     # Create a temporary directory for the test run
     TEST_DIR=$(mktemp -d)
-    
+
     # Export HOME as the temp dir so the script writes logs/images there
     export HOME="$TEST_DIR"
-    
+
     # Add mocks to PATH
     chmod +x "$PROJECT_ROOT/tests/mocks/curl"
     chmod +x "$PROJECT_ROOT/tests/mocks/crontab"
     export PATH="$PROJECT_ROOT/tests/mocks:$PATH"
-    
+
     # Verify mocks are working
     if [ "$(which curl)" != "$PROJECT_ROOT/tests/mocks/curl" ]; then
         echo "Error: Mock curl not found in PATH"
@@ -24,7 +24,7 @@ setup() {
         echo "Error: Mock crontab not found in PATH"
         exit 1
     fi
-    
+
     export FORCE_STDIN=1
 }
 
@@ -38,15 +38,15 @@ teardown() {
     # 2. Custom Time: N
     run bash "$PROJECT_ROOT/install.sh" <<< "
 N"
-    
+
     [ "$status" -eq 0 ]
-    
+
     # Verify directory creation
     [ -d "$HOME/scripts" ]
-    
+
     # Verify script download
     [ -f "$HOME/scripts/bing_wallpaper.sh" ]
-    
+
     # Verify permissions (executable)
     [ -x "$HOME/scripts/bing_wallpaper.sh" ]
 }
@@ -55,13 +55,13 @@ N"
     # Run installer with default inputs (Region: Default, Time: Default)
     run bash "$PROJECT_ROOT/install.sh" <<< "
 N"
-    
+
     [ "$status" -eq 0 ]
-    
+
     # Check crontab mock file
     [ -f "$HOME/crontab.mock" ]
     run cat "$HOME/crontab.mock"
-    
+
     [[ "$output" == *"00 10 * * * $TEST_DIR/scripts/bing_wallpaper.sh >/dev/null 2>&1"* ]]
 }
 
@@ -75,9 +75,9 @@ N"
 y
 08
 30"
-    
+
     [ "$status" -eq 0 ]
-    
+
     run cat "$HOME/crontab.mock"
     [[ "$output" == *"30 08 * * * $TEST_DIR/scripts/bing_wallpaper.sh >/dev/null 2>&1"* ]]
 }
@@ -87,23 +87,23 @@ y
     run bash "$PROJECT_ROOT/install.sh" <<< "
 N"
     [ "$status" -eq 0 ]
-    
+
     # Verify 10:00 exists
     run cat "$HOME/crontab.mock"
     [[ "$output" == *"00 10 * * * $TEST_DIR/scripts/bing_wallpaper.sh >/dev/null 2>&1"* ]]
-    
+
     # 2. Run again with custom (09:15)
     run bash "$PROJECT_ROOT/install.sh" <<< "
 y
 09
 15"
     [ "$status" -eq 0 ]
-    
+
     # Verify 09:15 exists AND 10:00 is GONE
     run cat "$HOME/crontab.mock"
     [[ "$output" == *"15 09 * * * $TEST_DIR/scripts/bing_wallpaper.sh >/dev/null 2>&1"* ]]
     [[ "$output" != *"00 10 * * * $TEST_DIR/scripts/bing_wallpaper.sh"* ]]
-    
+
     # Verify there is only one line for the script
     run grep -c "bing_wallpaper.sh" "$HOME/crontab.mock"
     [ "$output" -eq 1 ]
@@ -115,13 +115,13 @@ y
     # 2. Custom Time: N
     run bash "$PROJECT_ROOT/install.sh" <<< "ja-JP
 N"
-    
+
     [ "$status" -eq 0 ]
-    
+
     # Verify the script content has been updated
     run grep 'REGION="ja-JP"' "$HOME/scripts/bing_wallpaper.sh"
     [ "$status" -eq 0 ]
-    
+
     # Verify old default is gone
     run grep 'REGION="en-WW"' "$HOME/scripts/bing_wallpaper.sh"
     [ "$status" -eq 1 ]
@@ -133,7 +133,7 @@ N"
     echo "exit 1" >> "$TEST_DIR/bin/curl"
     chmod +x "$TEST_DIR/bin/curl"
     export PATH="$TEST_DIR/bin:$PATH"
-    
+
     run bash "$PROJECT_ROOT/install.sh"
     [ "$status" -eq 1 ]
     [[ "$output" == *"Error: Could not download script"* ]]
@@ -162,7 +162,7 @@ N"
     # Input 4: 10 (Valid Hour)
     # Input 5: 99 (Invalid Minute)
     # Input 6: 30 (Valid Minute)
-    
+
     run bash "$PROJECT_ROOT/install.sh" <<< "
 Y
 25

@@ -1,6 +1,7 @@
 .git
 .github
 coverage/
+coverage_inputs/
 coverage-inputs/
 coverage-merged/
 coverage_debug/

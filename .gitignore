@@ -1,14 +1,14 @@
 # **Linux / System Files**
 
-.DS\_Store  
-Thumbs.db  
+.DS\_Store
+Thumbs.db
 Desktop.ini
 
 # **Editor / IDE Files**
 
-.vscode/  
-.idea/  
-*.swp  
+.vscode/
+.idea/
+*.swp
 *.swo
 
 # **Logs**
@@ -17,13 +17,13 @@ Desktop.ini
 
 # **Downloaded Wallpapers (if testing locally)**
 
-*.jpg  
-*.jpeg  
+*.jpg
+*.jpeg
 *.png
 
 # **Temporary folders**
 
-Bing/  
+Bing/
 test/
 node_modules/
 
@@ -34,3 +34,12 @@ node_modules/
 # **Coverage**
 coverage/
 coverage_inputs/
+
+# **Python / Quality Tool Caches**
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.venv/
+venv/

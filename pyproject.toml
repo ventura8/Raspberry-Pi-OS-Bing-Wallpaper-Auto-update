@@ -1,0 +1,21 @@
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "C4", "W"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+exclude = "^(coverage|coverage_inputs)/"
+
+[[tool.mypy.overrides]]
+module = ["xml.etree.ElementTree"]
+ignore_missing_imports = true

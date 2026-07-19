@@ -12,7 +12,7 @@
 
 1. Clone the repository
 2. Ensure Docker is running
-3. Run `./run_tests_local.ps1` to verify everything works
+3. Run `./scripts/local/run_tests_local.ps1` to verify everything works
 
 ## Coding Standards
 
@@ -20,10 +20,20 @@
 
 - **Shebang**: Always use `#!/bin/bash`
 - **Shellcheck**: All scripts must pass ShellCheck with no warnings
+- **Formatting**: All shell scripts must pass `shfmt -i 2 -ci`
 - **Quoting**: Always quote variables (`"$VAR"` not `$VAR`)
 - **Error Handling**: Use `set -e` at the top of scripts where appropriate
 - **Functions**: Prefer functions over inline code for reusability
 - **Comments**: Document non-obvious logic
+
+### Quality Toolchain
+
+- Shell: `shfmt`, `shellcheck`
+- Python: `ruff format --check`, `ruff check`, `mypy`
+- YAML: `yamllint`
+- Dockerfile: `hadolint`
+- Markdown: `markdownlint-cli2`
+- Line-length policy: `python3 scripts/check_line_length.py` (140 max, non-Markdown)
 
 ### Naming Conventions
 
@@ -45,20 +55,21 @@
 
 ### Before Every Commit
 
-1. ✅ Run `./run_tests_local.ps1` and ensure all tests pass
-2. ✅ Verify coverage is **≥90%**
-3. ✅ **Commit the updated coverage badge** (`assets/coverage.svg`)
-4. ✅ Update `Instructions.md`, `README.md`, or `docs/` files if making functional changes
+1. ✅ Run `./scripts/local/run_tests_local.ps1` and ensure all tests pass
+2. ✅ Run `./scripts/local/run_quality_local.ps1` and ensure all checks pass
+3. ✅ Verify coverage is **≥90%**
+4. ✅ **Commit the updated coverage badge** (`assets/coverage.svg`)
+5. ✅ Update `docs/Instructions.md`, `README.md`, or `docs/` files if making functional changes
 
 ### Badge Automation
 
 The coverage badge is generated **locally** during test runs:
 
-```
-run_tests_local.ps1 → transform_coverage.py → badge.svg → assets/coverage.svg
+```text
+scripts/local/run_tests_local.ps1 → transform_coverage.py → badge.svg → assets/coverage.svg
 ```
 
-> ⚠️ **Always commit the badge with your code changes.**  
+> ⚠️ **Always commit the badge with your code changes.**
 > CI does **not** update the badge—you must do this locally.
 
 ### Documentation Updates
@@ -76,7 +87,7 @@ When making changes, update the relevant documentation:
 
 The GitHub Actions CI pipeline (`.github/workflows/ci.yml`) runs:
 
-1. **Lint Checks**: ShellCheck on all shell scripts
+1. **Quality Gates**: Mandatory lint/format/type/line-length checks
 2. **Unit Tests**: Install/uninstall test suites
 3. **Component Tests**: Wallpaper script tests
 4. **System Tests**: End-to-end integration tests
@@ -85,8 +96,9 @@ The GitHub Actions CI pipeline (`.github/workflows/ci.yml`) runs:
 ### CI Coverage Enforcement
 
 The CI pipeline will **fail** if:
+
 - Coverage drops below **90%**
 - Any test suite fails
-- ShellCheck finds issues
+- Any quality gate fails
 
 The badge is **not** updated by CI—you must generate and commit it locally.
