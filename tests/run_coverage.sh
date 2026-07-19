@@ -29,8 +29,8 @@ echo "Searching for cobertura.xml..."
 find "$COVERAGE_DIR" -name cobertura.xml -exec cp {} "$COVERAGE_DIR/cobertura.xml" \;
 
 if [ ! -f "$COVERAGE_DIR/cobertura.xml" ]; then
-    echo "FAILED to move cobertura.xml"
-    exit 1
+  echo "FAILED to move cobertura.xml"
+  exit 1
 fi
 
 echo "Coverage report generated in $COVERAGE_DIR"

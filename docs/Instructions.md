@@ -6,17 +6,17 @@ The detailed documentation has been split into multiple files for easier navigat
 
 ## Documentation Index
 
-- [Project Overview & Directory Structure](docs/project_overview.md)
+- [Project Overview & Directory Structure](project_overview.md)
   - General project goals and file organization.
-- [Shell Scripts & Logic](docs/shell_scripts.md)
+- [Shell Scripts & Logic](shell_scripts.md)
   - Detailed explanation of the main scripts (`bing_wallpaper.sh`, `install.sh`, `uninstall.sh`).
-- [Testing & Coverage](docs/testing_coverage.md)
+- [Testing & Coverage](testing_coverage.md)
   - Testing framework, coverage requirements, and badge generation.
-- [Development Standards](docs/development_standards.md)
+- [Development Standards](development_standards.md)
   - Environment setup, coding standards, and mandatory requirements.
-- [Release Documents](docs/release/README.md)
+- [Release Documents](release/README.md)
   - GitHub-ready release descriptions and release notes.
-- [AI Rules](.agent/ai_rules.md)
+- [AI Rules](../.agent/ai_rules.md)
   - **For AI Agents**: Specific rules regarding linting priority, coverage requirements, and cross-platform compatibility.
 
 ## Mandatory Local Commands
@@ -27,9 +27,9 @@ The detailed documentation has been split into multiple files for easier navigat
 
 ## Copilot Customization Files
 
-- `.github/copilot-instructions.md`
-- `AGENTS.md`
-- `.github/instructions/*.instructions.md`
-- `.github/prompts/*.prompt.md`
-- `.github/agents/*.agent.md`
-- `.github/skills/*/SKILL.md`
+- `../.github/copilot-instructions.md`
+- `../AGENTS.md`
+- `../.github/instructions/*.instructions.md`
+- `../.github/prompts/*.prompt.md`
+- `../.github/agents/*.agent.md`
+- `../.github/skills/*/SKILL.md`

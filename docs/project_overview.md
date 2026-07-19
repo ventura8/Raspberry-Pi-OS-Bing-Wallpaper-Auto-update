@@ -12,7 +12,7 @@ The **Bing Wallpaper for Raspberry Pi** is a lightweight utility that automatica
 
 ## Directory Structure
 
-```
+```text
 ├── bing_wallpaper.sh      # Main wallpaper script
 ├── install.sh             # Interactive installer
 ├── uninstall.sh           # Uninstaller script
@@ -33,8 +33,8 @@ The **Bing Wallpaper for Raspberry Pi** is a lightweight utility that automatica
 ├── .github/
 │   └── workflows/
 │       └── ci.yml         # GitHub Actions CI pipeline
-├── run_tests_local.ps1    # Local test runner (Windows)
-├── run_coverage_local.ps1 # Simple coverage runner (Windows)
+├── scripts/local/run_tests_local.ps1    # Local test runner (Windows)
+├── scripts/local/run_coverage_local.ps1 # Simple coverage runner (Windows)
 └── README.md
 ```
 

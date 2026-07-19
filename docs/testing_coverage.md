@@ -18,10 +18,17 @@ This project uses [BATS](https://github.com/bats-core/bats-core) (Bash Automated
 Tests run inside Docker for consistency. Use the PowerShell script:
 
 ```powershell
-./run_tests_local.ps1
+./scripts/local/run_tests_local.ps1
+```
+
+Run mandatory quality checks first:
+
+```powershell
+./scripts/local/run_quality_local.ps1
 ```
 
 This script:
+
 1. Builds the Docker test image
 2. Runs all test suites with coverage
 3. Merges coverage reports from all suites
@@ -33,7 +40,8 @@ This script:
 > ⚠️ **MANDATORY: 90% minimum code coverage is required.**
 
 The CI pipeline will **fail** if coverage drops below 90%. This threshold is enforced in:
-- `.github/workflows/ci.yml` (CI threshold: `90 90`)
+
+- `.github/workflows/ci.yml` (explicit threshold check: `>= 90%`)
 - Local test runs will generate a warning if below 90%
 
 ### Coverage Badge Generation
@@ -44,7 +52,7 @@ After running tests locally, the badge is automatically updated by `tests/transf
 
 #### Badge Generation Process
 
-1. `run_tests_local.ps1` runs all tests with kcov
+1. `scripts/local/run_tests_local.ps1` runs all tests with kcov
 2. Coverage reports are merged into `coverage/cobertura.xml`
 3. `transform_coverage.py` processes the XML and generates `badge.svg`
 4. The badge is moved to `assets/coverage.svg`
@@ -62,6 +70,7 @@ docker run --rm -v "${PWD}:/workdir" -w /workdir wallpaper-test python3 tests/tr
 ### Mock Binaries
 
 The `tests/mocks/` directory contains mock implementations of system binaries used during testing:
+
 - Mock `pcmanfm` for wallpaper setting
 - Mock `curl` for network requests
 - Mock `crontab` for schedule management

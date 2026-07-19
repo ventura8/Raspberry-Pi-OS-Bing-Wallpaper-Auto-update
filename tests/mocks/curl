@@ -18,7 +18,7 @@ if [[ "$*" == *"bing"* ]] || [[ "$*" == *"Bing"* ]] && [[ "$*" != *"bing_wallpap
     # Return a dummy JSON that looks like Bing's response
     # NOTE: Content updated to include Title in copyright for legacy extraction compatibility
     CONTENT='{"images":[{"startdate":"20251230","fullstartdate":"202512300000","enddate":"20251231","url":"/th?id=OHR.TestImage_EN-US123456789_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp","urlbase":"/th?id=OHR.TestImage_EN-US123456789","copyright":"Test Image Title (© Photographer/Provider)","copyrightlink":"https://www.bing.com/search?q=Test+Image","title":"Test Image Title","quiz":"/search?q=Bing+homepage+quiz&filters=WQOskey:%22HPQuiz_20251230_TestImage%22&FORM=HPQUIZ","wp":true,"hsh":"33221144556677889900aabbccddeeff","drk":1,"top":1,"bot":1,"hs":[]}],"tooltips":{"loading":"Loading...","previous":"Previous image","next":"Next image","walle":"This image is not available to download as wallpaper.","walls":"Download this image as wallpaper"}}'
-    
+
     if [ -n "$OUTPUT_FILE" ]; then
         echo "$CONTENT" > "$OUTPUT_FILE"
     else
