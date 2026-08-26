@@ -2,6 +2,10 @@
 
 This repository is a Bash-first project for automatic Bing wallpaper updates on Raspberry Pi OS and Xubuntu.
 
+Canonical agent rules live in [`AGENTS.md`](../AGENTS.md); specialist modes and
+skills are indexed in [`AGENTS.md`](AGENTS.md) and [`skills/`](skills/). Treat
+this file as a quick-reference summary, not a second rulebook.
+
 ## Mandatory Quality Rules
 
 - Run quality checks before tests: `scripts/quality_checks.sh`.
@@ -10,6 +14,12 @@ This repository is a Bash-first project for automatic Bing wallpaper updates on 
 - Keep Markdown linting enabled, but do not enforce Markdown line-length limits.
 - Keep local and CI checks aligned; do not add checks in one without the other.
 - Maintain coverage threshold at 90% or higher.
+
+## Always Update Relevant Markdown
+
+On **every task**, update **all relevant Markdown files** in the same change set.
+See **Always Update Relevant Markdown** in [`AGENTS.md`](../AGENTS.md) for the
+full path list (agent docs, Copilot mirrors, `README.md`, and `docs/*.md`).
 
 ## Primary Commands
 

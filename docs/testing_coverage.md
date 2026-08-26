@@ -7,7 +7,7 @@ This project uses [BATS](https://github.com/bats-core/bats-core) (Bash Automated
 ### Test Suites
 
 | File | Description |
-|------|-------------|
+| ---- | ----------- |
 | `tests/install_test.bats` | Unit tests for `install.sh` |
 | `tests/uninstall_test.bats` | Unit tests for `uninstall.sh` |
 | `tests/bing_wallpaper_test.bats` | Component tests for `bing_wallpaper.sh` |

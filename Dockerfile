@@ -1,7 +1,7 @@
-FROM debian:trixie-slim@sha256:020c0d20b9880058cbe785a9db107156c3c75c2ac944a6aa7ab59f2add76a7bd
+FROM debian:trixie-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132
 
-ARG DEBIAN_SNAPSHOT=20260713T000000Z
-ARG HADOLINT_VERSION=v2.14.0
+ARG DEBIAN_SNAPSHOT=20260825T000000Z
+ARG HADOLINT_VERSION=v2.15.1
 ARG TARGETARCH
 
 RUN rm -f /etc/apt/sources.list.d/* \
@@ -38,16 +38,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --no-cache-dir --break-system-packages \
-    mypy==1.17.1 \
-    ruff==0.13.1 \
-    yamllint==1.37.1 \
-    && npm install --global markdownlint-cli2@0.18.1
+    mypy==2.3.1 \
+    ruff==0.16.4 \
+    yamllint==1.38.0 \
+    && npm install --global markdownlint-cli2@0.23.2
 
 RUN arch="${TARGETARCH:-}" \
         && if [ -z "$arch" ]; then arch="$(dpkg --print-architecture)"; fi \
         && case "$arch" in \
-            amd64) hadolint_arch="x86_64"; hadolint_sha256="6bf226944684f56c84dd014e8b979d27425c0148f61b3bd99bcc6f39e9dc5a47" ;; \
-            arm64) hadolint_arch="arm64"; hadolint_sha256="331f1d3511b84a4f1e3d18d52fec284723e4019552f4f47b19322a53ce9a40ed" ;; \
+            amd64) hadolint_arch="x86_64"; hadolint_sha256="c7187db94eeeeca956519a6af171adc31453941a1e777961f6e680f697c8c507" ;; \
+            arm64) hadolint_arch="arm64"; hadolint_sha256="f6198ef8090f404dbb771abfee086eb8c48ac177f30da7fd3510aca35b344b5d" ;; \
             *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
         esac \
         && hadolint_url="https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-linux-${hadolint_arch}" \

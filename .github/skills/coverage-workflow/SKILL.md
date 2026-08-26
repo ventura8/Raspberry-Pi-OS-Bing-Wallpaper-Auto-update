@@ -5,6 +5,9 @@ description: "Use when working on coverage merge, badge generation, or coverage 
 
 # Coverage Workflow Skill
 
+Copilot mirror of the canonical [`coverage-badge`](../../../.agents/skills/coverage-badge/SKILL.md)
+skill. Keep both in sync when commands or tools change.
+
 ## Objective
 
 Keep coverage processing stable and enforce the 90% threshold in local and CI workflows.
