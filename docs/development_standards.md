@@ -38,7 +38,7 @@
 ### Naming Conventions
 
 | Type | Convention | Example |
-|------|------------|---------|
+| ------ | ------------ | --------- |
 | Scripts | `snake_case.sh` | `bing_wallpaper.sh` |
 | Functions | `snake_case` | `download_image()` |
 | Variables | `UPPER_SNAKE_CASE` | `$REGION`, `$KEEP_OLD` |
@@ -74,14 +74,18 @@ scripts/local/run_tests_local.ps1 → transform_coverage.py → badge.svg → as
 
 ### Documentation Updates
 
-When making changes, update the relevant documentation:
+On **every task**, update **all relevant Markdown files** in the same change set.
+See **Always Update Relevant Markdown** in [`AGENTS.md`](../AGENTS.md) for the
+full path list. At minimum, keep these human docs aligned when the matching area
+changes:
 
 | Change Type | Update These Files |
-|-------------|-------------------|
+| ------------- | ------------------ |
 | New feature | `README.md`, `docs/shell_scripts.md` |
 | Config change | `README.md`, `docs/shell_scripts.md` |
 | Test change | `docs/testing_coverage.md` |
 | Build/CI change | `docs/development_standards.md` |
+| Agent/CI/workflow change | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agent/ai_rules.md`, affected `.agents/skills/`, Copilot mirrors |
 
 ## CI Pipeline
 

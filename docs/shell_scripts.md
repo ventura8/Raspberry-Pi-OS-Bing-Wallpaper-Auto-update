@@ -9,7 +9,7 @@ The main wallpaper management script with the following features:
 ### Configuration Variables (Top of File)
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -------- | ------- | ----------- |
 | `REGION` | `en-WW` | Bing market/region code |
 | `RESOLUTION` | `1080p` | Target resolution (`1080p` or `4k`) |
 | `KEEP_OLD` | `false` | Keep history of old wallpapers |

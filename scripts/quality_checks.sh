@@ -41,13 +41,16 @@ hadolint Dockerfile
 echo "[quality] Markdown lint"
 markdownlint-cli2 \
   "AGENTS.md" \
+  "CLAUDE.md" \
+  "GEMINI.md" \
   ".instructions.md" \
   ".prompt.md" \
   "README.md" \
   "docs/Instructions.md" \
   "docs/**/*.md" \
   ".github/**/*.md" \
-  ".agent/**/*.md"
+  ".agent/**/*.md" \
+  ".agents/**/*.md"
 
 echo "[quality] Line-length policy"
 python3 scripts/check_line_length.py

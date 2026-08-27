@@ -1,6 +1,7 @@
 # **🍓 Bing Wallpaper for Raspberry Pi**
 
 ![Language](https://img.shields.io/badge/Language-Shell-blue) ![Coverage](assets/coverage.svg)
+[![Release](https://img.shields.io/badge/release-v1.0.2-blue.svg)](docs/releases/v1.0.2.md)
 
 **Auto-magically set the "Bing Wallpaper of the Day" as your Raspberry Pi desktop background.**
 
@@ -154,7 +155,7 @@ To run tests locally (requires Docker):
 
 Coverage reports are generated in the `coverage/` directory, and the badge is updated at `assets/coverage.svg`.
 
-Release descriptions are stored in `docs/release/`.
+Release descriptions are stored in [`docs/releases/`](docs/releases/).
 
 ## **🗑️ Uninstallation**
 

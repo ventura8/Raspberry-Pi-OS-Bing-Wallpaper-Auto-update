@@ -64,7 +64,9 @@ $mergeCommands = @(
     "kcov --merge coverage/merged coverage_inputs/installer/* coverage_inputs/component/* coverage_inputs/system/*",
     "echo 'Debug: contents of merged'",
     "ls -R coverage/merged",
-    "find coverage/merged -name cobertura.xml -exec cp {} coverage/cobertura.xml \;",
+    'merged_xml="$(find coverage/merged -name cobertura.xml | head -n 1)"',
+    'if [ ! -f "$merged_xml" ]; then echo "Merged cobertura.xml not found" >&2; exit 1; fi',
+    'cp "$merged_xml" coverage/cobertura.xml',
     "python3 tests/transform_coverage.py coverage/cobertura.xml",
     "echo 'Generating Summary...'",
     "python3 tests/generate_summary.py coverage/cobertura.xml | tee coverage-summary.md"
@@ -78,6 +80,22 @@ docker run --rm `
     -w /workdir `
     wallpaper-test /bin/bash -c ($mergeCommands -join " && ")
 Assert-LastExitCode "Coverage merge/report failed."
+
+Write-Host "STAGE: Enforce Coverage Threshold (>=90%)..." -ForegroundColor Cyan
+$thresholdScript = @'
+import xml.etree.ElementTree as ET
+root = ET.parse("coverage/cobertura.xml").getroot()
+line_rate = float(root.get("line-rate", "0")) * 100
+print("Total coverage: {:.2f}%".format(line_rate))
+if line_rate < 90.0:
+    raise SystemExit("Coverage below 90% threshold: {:.2f}%".format(line_rate))
+'@
+$thresholdScript | docker run --rm -i `
+    -v "${workspace}:/workdir" `
+    -w /workdir `
+    wallpaper-test `
+    python3 -
+Assert-LastExitCode "Coverage below 90% threshold."
 
 Write-Host "Updating local coverage badge..." -ForegroundColor Cyan
 if (Test-Path "badge.svg") {

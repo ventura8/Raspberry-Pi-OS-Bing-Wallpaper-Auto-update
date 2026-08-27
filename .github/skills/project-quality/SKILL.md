@@ -5,6 +5,9 @@ description: "Use when adding, repairing, or validating project-wide lint, forma
 
 # Project Quality Skill
 
+Copilot mirror of the canonical [`quality-gate`](../../../.agents/skills/quality-gate/SKILL.md)
+skill. Keep both in sync when commands or tools change.
+
 ## Objective
 
 Maintain strict quality gates for Bash, Python, YAML, Dockerfile, Markdown, and line-length policy.
