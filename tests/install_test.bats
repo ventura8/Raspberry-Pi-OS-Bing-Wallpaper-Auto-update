@@ -11,8 +11,8 @@ setup() {
     export HOME="$TEST_DIR"
 
     # Add mocks to PATH
-    chmod +x "$PROJECT_ROOT/tests/mocks/curl"
-    chmod +x "$PROJECT_ROOT/tests/mocks/crontab"
+    [[ -x "$PROJECT_ROOT/tests/mocks/curl" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/curl"
+    [[ -x "$PROJECT_ROOT/tests/mocks/crontab" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/crontab"
     export PATH="$PROJECT_ROOT/tests/mocks:$PATH"
 
     # Verify mocks are working

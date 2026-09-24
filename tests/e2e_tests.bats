@@ -10,7 +10,9 @@ setup() {
     export HOME="$TEST_DIR"
 
     # Ensure they are executable
-    chmod +x "$PROJECT_ROOT/tests/mocks/"*
+    for mock in "$PROJECT_ROOT/tests/mocks/"*; do
+        [[ -x "$mock" ]] || chmod +x "$mock"
+    done
 
     # Force scripts to read from stdin (for <<< redirection)
     export FORCE_STDIN=1

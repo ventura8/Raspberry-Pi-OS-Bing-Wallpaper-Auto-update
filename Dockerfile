@@ -38,9 +38,9 @@ RUN apt-get update \
         nodejs=20.19.2+dfsg-1+deb13u2 \
         npm=9.2.0~ds1-3 \
         procps=2:4.0.4-9 \
-        python3=3.13.5-1 \
         python3-pip=25.1.1+dfsg-1 \
         python3-venv=3.13.5-1 \
+        python3=3.13.5-1 \
         xz-utils=5.8.1-1+deb13u1 \
     && rm -rf /var/lib/apt/lists/* \
     && python3 -m pip install --no-cache-dir --break-system-packages --only-binary :all: \
@@ -83,10 +83,10 @@ RUN apt-get update \
 # Set working directory
 WORKDIR /app
 
-# Copy only what the quality gates and test suites need
-COPY --chown=1001:1001 bing_wallpaper.sh install.sh uninstall.sh pyproject.toml ./
-COPY --chown=1001:1001 scripts ./scripts
-COPY --chown=1001:1001 tests ./tests
+# Copy only what the quality gates and test suites need (root-owned, read-only for the test user)
+COPY bing_wallpaper.sh install.sh uninstall.sh pyproject.toml ./
+COPY scripts ./scripts
+COPY tests ./tests
 
 # Convert line endings to Unix style (for Windows hosts) and make scripts executable
 RUN dos2unix ./*.sh ./tests/*.bats ./tests/mocks/* ./tests/*.py ./scripts/*.py ./scripts/*.sh \
