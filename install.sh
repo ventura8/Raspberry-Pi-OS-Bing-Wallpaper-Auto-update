@@ -22,7 +22,18 @@ ask_user() {
   else
     read -r -p "$prompt" "${var_name?}"
   fi
+  local read_status=$?
+  # A last line without a trailing newline still counts as an answer
+  if [[ "$read_status" -ne 0 ]] && [[ -z "${!var_name}" ]]; then
+    return "$read_status"
+  fi
   return 0
+}
+
+# Abort when a prompt hits end of input instead of silently using defaults
+input_closed() {
+  echo -e "${RED}Error: No input received (end of input). Aborting.${NC}" >&2
+  exit 1
 }
 
 # 1. Setup Directories
@@ -50,7 +61,7 @@ echo -e "${GREEN}Script installed and permissions set.${NC}"
 # --------------------
 echo -e "${BLUE}Configuring Bing Region...${NC}"
 DEFAULT_REGION="en-WW"
-ask_user "Enter Bing Region code (Default: en-WW, options: en-US, ja-JP, etc.): " USER_REGION
+ask_user "Enter Bing Region code (Default: en-WW, options: en-US, ja-JP, etc.): " USER_REGION || input_closed
 
 # Use default if input is empty
 if [[ -z "$USER_REGION" ]]; then
@@ -87,12 +98,12 @@ fi
 
 # Ask user for custom time
 echo -e "Default update time is ${YELLOW}10:00 AM${NC}."
-ask_user "Do you want to set a custom update time? (y/N): " CUSTOM_TIME
+ask_user "Do you want to set a custom update time? (y/N): " CUSTOM_TIME || input_closed
 
 if [[ "$CUSTOM_TIME" =~ ^[Yy]$ ]]; then
   # Get Hour
   while true; do
-    ask_user "Enter Hour (0-23): " INPUT_HOUR
+    ask_user "Enter Hour (0-23): " INPUT_HOUR || input_closed
     if [[ "$INPUT_HOUR" =~ ^[0-9]+$ ]] && ((10#$INPUT_HOUR <= 23)); then
       CRON_HOUR=$INPUT_HOUR
       break
@@ -103,7 +114,7 @@ if [[ "$CUSTOM_TIME" =~ ^[Yy]$ ]]; then
 
   # Get Minute
   while true; do
-    ask_user "Enter Minute (0-59): " INPUT_MINUTE
+    ask_user "Enter Minute (0-59): " INPUT_MINUTE || input_closed
     if [[ "$INPUT_MINUTE" =~ ^[0-9]+$ ]] && ((10#$INPUT_MINUTE <= 59)); then
       CRON_MINUTE=$INPUT_MINUTE
       break

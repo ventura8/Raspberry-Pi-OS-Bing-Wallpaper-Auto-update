@@ -98,7 +98,8 @@ The GitHub Actions CI pipeline (`.github/workflows/ci.yml`) runs:
 5. **Coverage Report**: Merged report with 90% minimum threshold; also converts it to
    SonarQube generic coverage (`scripts/cobertura_to_sonar.py` → `coverage/sonar-coverage.xml`)
 6. **SonarQube Cloud Analysis**: Scans the repo with `SonarSource/sonarqube-scan-action`
-   using `sonar-project.properties` and the `SONAR_TOKEN` repository secret. Skipped for
+   using `sonar-project.properties` and the `SONAR_TOKEN` repository secret. The job waits
+   for the quality gate and fails when it fails. Skipped for
    pull requests from forks, which cannot read secrets.
 
 All third-party actions are pinned to full commit SHAs with the version in a trailing comment.

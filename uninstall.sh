@@ -8,6 +8,7 @@
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}Starting Bing Wallpaper Uninstallation...${NC}"
@@ -21,7 +22,18 @@ ask_user() {
   else
     read -r -p "$prompt" "${var_name?}"
   fi
+  local read_status=$?
+  # A last line without a trailing newline still counts as an answer
+  if [[ "$read_status" -ne 0 ]] && [[ -z "${!var_name}" ]]; then
+    return "$read_status"
+  fi
   return 0
+}
+
+# Abort when a prompt hits end of input instead of silently using defaults
+input_closed() {
+  echo -e "${RED}Error: No input received (end of input). Aborting.${NC}" >&2
+  exit 1
 }
 
 # Define paths
@@ -30,7 +42,7 @@ SCRIPT_FILE="$INSTALL_DIR/bing_wallpaper.sh"
 LOG_FILE="$INSTALL_DIR/wallpaper.log"
 
 # Interactive confirmation
-ask_user "Are you sure you want to remove Bing Wallpaper and its scheduled tasks? (y/N): " CONFIRM
+ask_user "Are you sure you want to remove Bing Wallpaper and its scheduled tasks? (y/N): " CONFIRM || input_closed
 
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
   echo -e "${YELLOW}Uninstallation cancelled.${NC}"

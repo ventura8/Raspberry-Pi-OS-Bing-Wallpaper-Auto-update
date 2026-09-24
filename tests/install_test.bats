@@ -195,3 +195,15 @@ xyz
     [[ "$output" == *"Invalid minute"* ]]
     [[ "$output" == *"10:30"* ]]
 }
+
+@test "Installer exits nonzero when input ends during the custom time prompt" {
+    # Region: default, custom time: y, then end of input before the hour
+    run bash "$PROJECT_ROOT/install.sh" <<< "
+y"
+
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"No input received"* ]]
+
+    # No crontab entry may be written on aborted input
+    [ ! -f "$HOME/crontab.mock" ]
+}

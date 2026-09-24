@@ -20,9 +20,10 @@ def resolve_repo_path(raw_path: str, root: Path) -> str | None:
     parts = PurePosixPath(raw_path.replace("\\", "/")).parts
     for start in range(len(parts)):
         candidate = PurePosixPath(*parts[start:])
-        if str(candidate) in ("", "/"):
+        if candidate.is_absolute() or str(candidate) in ("", "."):
             continue
-        if (root / candidate).is_file():
+        resolved = (root / candidate).resolve()
+        if resolved.is_relative_to(root) and resolved.is_file():
             return candidate.as_posix()
     return None
 

@@ -116,3 +116,11 @@ teardown() {
     [ "$status" -eq 0 ]
     [[ "$output" == *"No crontab entry found"* ]]
 }
+
+@test "Uninstaller exits nonzero and keeps files when input is closed" {
+    run bash "$PROJECT_ROOT/uninstall.sh" < /dev/null
+
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"No input received"* ]]
+    [ -f "$HOME/scripts/bing_wallpaper.sh" ]
+}
