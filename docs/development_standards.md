@@ -102,6 +102,7 @@ The GitHub Actions CI pipeline (`.github/workflows/ci.yml`) runs:
    for the quality gate and fails when it fails. Skipped for
    pull requests from forks, which cannot read secrets.
 
+Test containers run as uid 1001 (non-root) with no `chmod 777` on mounted directories.
 All third-party actions are pinned to full commit SHAs with the version in a trailing comment.
 
 ### CI Coverage Enforcement

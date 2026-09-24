@@ -46,25 +46,25 @@ def is_excluded(path: Path, root: Path) -> bool:
     return any(part in EXCLUDE_DIRS for part in rel.parts)
 
 
+def candidate_files(root: Path) -> list[Path]:
+    return [path for path in sorted(root.rglob("*")) if path.is_file() and not is_excluded(path, root) and should_check(path)]
+
+
+def file_violations(file_path: Path, root: Path) -> list[str]:
+    try:
+        lines = file_path.read_text(encoding="utf-8").splitlines()
+    except UnicodeDecodeError:
+        return []
+
+    rel = file_path.relative_to(root).as_posix()
+    return [
+        f"{rel}:{index}: line has {len(line)} chars (max {MAX_LEN})" for index, line in enumerate(lines, start=1) if len(line) > MAX_LEN
+    ]
+
+
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
-    failures: list[str] = []
-
-    for file_path in sorted(root.rglob("*")):
-        if not file_path.is_file() or is_excluded(file_path, root):
-            continue
-        if not should_check(file_path):
-            continue
-
-        try:
-            lines = file_path.read_text(encoding="utf-8").splitlines()
-        except UnicodeDecodeError:
-            continue
-
-        for index, line in enumerate(lines, start=1):
-            if len(line) > MAX_LEN:
-                rel = file_path.relative_to(root).as_posix()
-                failures.append(f"{rel}:{index}: line has {len(line)} chars (max {MAX_LEN})")
+    failures = [failure for file_path in candidate_files(root) for failure in file_violations(file_path, root)]
 
     if failures:
         print("Line length violations found:")

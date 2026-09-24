@@ -88,6 +88,13 @@ docker run --rm --security-opt seccomp=unconfined --cap-add SYS_PTRACE \
   wallpaper-test ./tests/run_suite.sh
 ```
 
+The test image runs as the unprivileged user **uid 1001**, which matches the GitHub-hosted
+runner. Bind-mounted output directories (`coverage/`, `coverage_inputs/*`) must be writable
+by that uid. On Windows and macOS (Docker Desktop) this works automatically. On native
+Linux with a different uid, give the directory to uid 1001 first (for example
+`sudo chown 1001:1001 coverage`), or pass `--user 0` for a one-off write such as
+`ruff format`. Do not reintroduce `chmod 777` in CI.
+
 Windows / full host orchestration:
 
 ```powershell
@@ -103,7 +110,7 @@ Windows / full host orchestration:
 | `bing_wallpaper.sh` | Fetch, name, save, and apply the daily Bing wallpaper. |
 | `install.sh` | Interactive installer: region/resolution prompts, cron wiring, first run. |
 | `uninstall.sh` | Remove installed script, log, and crontab entry. |
-| `Dockerfile` | Pinned Debian trixie-slim test image (bats, kcov, shellcheck, shfmt, ruff, mypy, yamllint, hadolint, markdownlint-cli2). |
+| `Dockerfile` | Digest-pinned Debian trixie-slim test image over an HTTPS Debian snapshot (bats, kcov, shellcheck, shfmt, ruff, mypy, yamllint, hadolint, markdownlint-cli2); runs as non-root uid 1001. |
 | `tests/*.bats` | `bing_wallpaper_test.bats`, `install_test.bats`, `uninstall_test.bats`, `e2e_tests.bats`. |
 | `tests/run_suite.sh` | bats runner; `--file`, `--installer-only`, `--maintenance-only/--component-only`, `--e2e-only`. Wraps in `kcov` when `COVERAGE=1`. |
 | `tests/run_coverage.sh` | Single-shot local coverage run producing `coverage/cobertura.xml`. |

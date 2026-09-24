@@ -88,7 +88,6 @@ jobs:
       - name: Install Test
         run: |
           mkdir -p coverage
-          chmod 777 coverage
           docker run --rm \
             --security-opt seccomp=unconfined \
             --cap-add SYS_PTRACE \
@@ -137,7 +136,6 @@ jobs:
       - name: Execute Wallpaper Tests
         run: |
           mkdir -p coverage
-          chmod 777 coverage
           docker run --rm \
             --security-opt seccomp=unconfined \
             --cap-add SYS_PTRACE \
@@ -176,7 +174,6 @@ jobs:
       - name: Execute E2E Tests
         run: |
           mkdir -p coverage
-          chmod 777 coverage
           docker run --rm \
             --security-opt seccomp=unconfined \
             --cap-add SYS_PTRACE \
@@ -240,11 +237,9 @@ jobs:
       - name: Merge Coverage Reports
         run: |
           mkdir -p coverage/merged
-          chmod 777 coverage/merged
           docker run --rm \
             --security-opt seccomp=unconfined \
             --cap-add SYS_PTRACE \
-            --user root \
             -v "$PWD:/workdir" \
             -w /workdir \
             wallpaper-test \

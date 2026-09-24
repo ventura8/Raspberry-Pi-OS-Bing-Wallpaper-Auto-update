@@ -49,6 +49,10 @@ docker run --rm \
 `--security-opt seccomp=unconfined` and `--cap-add SYS_PTRACE` are required for
 `kcov`'s ptrace-based instrumentation.
 
+The image runs as uid 1001 (non-root). On native Linux with a different uid, make the
+mounted `coverage/` directory writable by uid 1001 first (for example
+`sudo chown 1001:1001 coverage`); Docker Desktop on Windows/macOS needs nothing extra.
+
 ## Mocking policy
 
 Never mock `bing_wallpaper.sh`, `install.sh`, or `uninstall.sh` themselves —

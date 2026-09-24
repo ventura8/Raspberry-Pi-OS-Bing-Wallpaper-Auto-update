@@ -10,7 +10,7 @@ function Assert-LastExitCode {
     }
 }
 
-if (!(Test-Path $coverageDir)) {
+if (-not (Test-Path $coverageDir)) {
     New-Item -ItemType Directory -Path $coverageDir | Out-Null
 }
 
@@ -38,7 +38,7 @@ Assert-LastExitCode "Coverage transform failed."
 
 Write-Host "Updating local coverage badge..." -ForegroundColor Cyan
 if (Test-Path "badge.svg") {
-    if (!(Test-Path "assets")) { New-Item -ItemType Directory -Path "assets" | Out-Null }
+    if (-not (Test-Path "assets")) { New-Item -ItemType Directory -Path "assets" | Out-Null }
     Move-Item -Path "badge.svg" -Destination "assets/coverage.svg" -Force
     Write-Host "Badge updated: assets/coverage.svg" -ForegroundColor Green
 }

@@ -44,6 +44,10 @@ The CI pipeline will **fail** if coverage drops below 90%. This threshold is enf
 - `.github/workflows/ci.yml` (explicit threshold check: `>= 90%`)
 - Local test runs will generate a warning if below 90%
 
+The test image runs as uid 1001 (non-root), matching the GitHub-hosted runner, so CI
+needs no `chmod` on the mounted coverage directories. On native Linux with a different
+uid, make `coverage/` writable by uid 1001 before a local covered run.
+
 CI also converts the merged report to SonarQube generic coverage with
 `scripts/cobertura_to_sonar.py` and uploads it to SonarQube Cloud.
 
