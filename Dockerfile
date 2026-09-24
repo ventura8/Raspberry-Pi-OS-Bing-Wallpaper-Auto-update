@@ -54,7 +54,7 @@ RUN arch="${TARGETARCH:-}" \
             *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
         esac \
         && hadolint_url="https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-linux-${hadolint_arch}" \
-        && curl -fsSL "$hadolint_url" -o /usr/local/bin/hadolint \
+        && curl --proto '=https' --tlsv1.2 -fsSL "$hadolint_url" -o /usr/local/bin/hadolint \
     && printf '%s  %s\n' "$hadolint_sha256" /usr/local/bin/hadolint > /tmp/hadolint.sha256 \
     && sha256sum -c /tmp/hadolint.sha256 \
     && rm -f /tmp/hadolint.sha256 \
@@ -70,12 +70,14 @@ RUN arch="${TARGETARCH:-}" \
         *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
     esac \
     && sc_url="https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}" \
-    && curl -fsSL "${sc_url}/shellcheck-${SHELLCHECK_VERSION}.linux.${sc_arch}.tar.xz" -o /tmp/shellcheck.tar.xz \
+    && curl --proto '=https' --tlsv1.2 -fsSL "${sc_url}/shellcheck-${SHELLCHECK_VERSION}.linux.${sc_arch}.tar.xz" \
+        -o /tmp/shellcheck.tar.xz \
     && printf '%s  %s\n' "$sc_sha256" /tmp/shellcheck.tar.xz | sha256sum -c - \
     && tar -xJf /tmp/shellcheck.tar.xz -C /tmp \
     && install -m 0755 "/tmp/shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/shellcheck \
     && rm -rf /tmp/shellcheck.tar.xz "/tmp/shellcheck-${SHELLCHECK_VERSION}" \
-    && curl -fsSL "https://github.com/mvdan/sh/releases/download/${SHFMT_VERSION}/shfmt_${SHFMT_VERSION}_linux_${arch}" \
+    && shfmt_url="https://github.com/mvdan/sh/releases/download/${SHFMT_VERSION}" \
+    && curl --proto '=https' --tlsv1.2 -fsSL "${shfmt_url}/shfmt_${SHFMT_VERSION}_linux_${arch}" \
         -o /usr/local/bin/shfmt \
     && printf '%s  %s\n' "$shfmt_sha256" /usr/local/bin/shfmt | sha256sum -c - \
     && chmod +x /usr/local/bin/shfmt
