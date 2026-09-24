@@ -64,6 +64,10 @@ Copilot surface would otherwise drift.
   `ruff check`, `mypy` (strict, see `pyproject.toml`, line-length 140).
 - **YAML**: `yamllint` over the workflow and lint-config files.
 - **Dockerfile**: `hadolint`.
+- **Static analysis**: SonarQube Cloud runs in CI (`sonarqube` job). Fix new issues at the
+  root cause — e.g. prefer `[[ ]]` over `[ ]`, end functions with an explicit `return`,
+  copy positional parameters into locals, send error messages to stderr — and never mark
+  issues as won't-fix to get the quality gate green.
 - **Markdown**: `markdownlint-cli2` over agent/docs Markdown.
 - **Failure handling**: do not hide, suppress, or downgrade real failures. The
   wallpaper, install, and uninstall scripts must report real errors and exit
@@ -108,6 +112,8 @@ Windows / full host orchestration:
 | `tests/mocks/` | Deterministic stand-ins for `curl`, `crontab`, `pcmanfm`, `pgrep`, `xfconf-query`, `xrandr`. |
 | `scripts/quality_checks.sh` | Canonical quality gate; mirrors the CI `quality-gates` job. |
 | `scripts/check_line_length.py` | Enforces the 140-char non-Markdown policy. |
+| `scripts/cobertura_to_sonar.py` | Converts merged kcov Cobertura XML to SonarQube generic coverage (`coverage/sonar-coverage.xml`). |
+| `sonar-project.properties` | SonarQube Cloud project config (org `ventura8`, sources/tests split, coverage report path). |
 | `scripts/local/*.ps1` | Windows-host quality/test/coverage orchestration (build image, run gates). |
 | `assets/coverage.svg` | Locally generated coverage badge (commit after coverage-affecting changes). |
 | `docs/Instructions.md` | Setup / build / contribute guide. |
@@ -117,7 +123,7 @@ Windows / full host orchestration:
 | `docs/development_standards.md` | Style/testing/CI standards reference. |
 | `docs/releases/vX.Y.Z.md` | Per-release notes; GitHub Release body source. Authored via the `prepare-release` skill. |
 | `VERSION` | Single source of truth for the released semver (`vN.N.N`). Read by `.github/workflows/release.yml` to validate a pushed tag. |
-| `.github/workflows/ci.yml` | GHA: `quality-gates` → `unit-tests` / `component-tests` / `system-tests` → `coverage-report` (merge + threshold + summary). |
+| `.github/workflows/ci.yml` | GHA: `quality-gates` → `unit-tests` / `component-tests` / `system-tests` → `coverage-report` (merge + threshold + summary + Sonar coverage) → `sonarqube` (SonarQube Cloud scan, needs `SONAR_TOKEN` secret). Actions are pinned to commit SHAs. |
 | `.github/workflows/release.yml` | GHA: on `v*` tag push — validates `VERSION` matches the tag and `docs/releases/<tag>.md` exists, then creates the GitHub Release from those notes. |
 
 ## Dependency & Mocking Policy

@@ -16,6 +16,8 @@ Keep coverage processing stable and enforce the 90% threshold in local and CI wo
 
 - `tests/transform_coverage.py`
 - `tests/generate_summary.py`
+- `scripts/cobertura_to_sonar.py` (SonarQube Cloud generic coverage)
+- `sonar-project.properties`
 - `scripts/local/run_tests_local.ps1`
 - `scripts/local/run_coverage_local.ps1`
 - `.github/workflows/ci.yml`

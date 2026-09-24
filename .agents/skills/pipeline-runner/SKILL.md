@@ -17,7 +17,8 @@ description: >-
 ## Hard rules
 
 1. Order is mandatory: `quality-gates` → (`unit-tests`, `component-tests`,
-   `system-tests` in any order) → `coverage-report` (merge + threshold + badge).
+   `system-tests` in any order) → `coverage-report` (merge + threshold + badge + Sonar coverage) → `sonarqube`
+   (SonarQube Cloud scan; CI-only, needs the `SONAR_TOKEN` secret).
    Mirrors `.github/workflows/ci.yml` job dependencies.
 2. Do not ship with a stale `assets/coverage.svg` after a coverage-affecting
    change.
@@ -74,6 +75,10 @@ cp "$merged_xml" coverage/cobertura.xml
 
 docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
   python3 tests/transform_coverage.py coverage/cobertura.xml
+
+# SonarQube Cloud generic coverage (CI uploads this to the sonarqube job)
+docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
+  python3 scripts/cobertura_to_sonar.py coverage/cobertura.xml coverage/sonar-coverage.xml
 
 docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
   python3 tests/generate_summary.py coverage/cobertura.xml | tee coverage-summary.md

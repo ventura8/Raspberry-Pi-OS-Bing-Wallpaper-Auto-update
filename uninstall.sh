@@ -16,11 +16,12 @@ echo -e "${BLUE}Starting Bing Wallpaper Uninstallation...${NC}"
 ask_user() {
   local prompt="$1"
   local var_name="$2"
-  if [ -z "$FORCE_STDIN" ] && [ -c /dev/tty ]; then
+  if [[ -z "$FORCE_STDIN" ]] && [[ -c /dev/tty ]]; then
     read -r -p "$prompt" "${var_name?}" </dev/tty
   else
     read -r -p "$prompt" "${var_name?}"
   fi
+  return 0
 }
 
 # Define paths
@@ -40,14 +41,14 @@ fi
 # ---------------
 echo -e "${BLUE}Removing files...${NC}"
 
-if [ -f "$SCRIPT_FILE" ]; then
+if [[ -f "$SCRIPT_FILE" ]]; then
   rm "$SCRIPT_FILE"
   echo -e "${GREEN}Removed script: $SCRIPT_FILE${NC}"
 else
   echo -e "${YELLOW}Script not found: $SCRIPT_FILE${NC}"
 fi
 
-if [ -f "$LOG_FILE" ]; then
+if [[ -f "$LOG_FILE" ]]; then
   rm "$LOG_FILE"
   echo -e "${GREEN}Removed log file: $LOG_FILE${NC}"
 else
@@ -56,9 +57,9 @@ fi
 
 # Optional: Remove directory if empty?
 # Only if it's exactly the install dir and empty.
-if [ -d "$INSTALL_DIR" ]; then
+if [[ -d "$INSTALL_DIR" ]]; then
   # count files
-  if [ -z "$(ls -A "$INSTALL_DIR")" ]; then
+  if [[ -z "$(ls -A "$INSTALL_DIR")" ]]; then
     rmdir "$INSTALL_DIR"
     echo -e "${GREEN}Removed empty directory: $INSTALL_DIR${NC}"
   else

@@ -2,10 +2,10 @@
 # Mock pgrep
 # Usage: MOCK_PGREP_MATCH="wayfire" ./script.sh
 
-ARGS="$@"
+ARGS="$*"
 
 # If we haven't set what to match, default to acting like nothing is running
-if [ -z "$MOCK_PGREP_MATCH" ]; then
+if [[ -z "$MOCK_PGREP_MATCH" ]]; then
     exit 1
 fi
 

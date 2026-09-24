@@ -30,6 +30,7 @@ mypy tests/*.py scripts/*.py
 echo "[quality] YAML lint"
 yamllint \
   .github/workflows/ci.yml \
+  .github/workflows/release.yml \
   .hadolint.yaml \
   .markdownlint.yaml \
   .pre-commit-config.yaml \

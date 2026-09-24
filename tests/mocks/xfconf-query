@@ -10,7 +10,7 @@ PROPERTY=""
 CREATE_MODE=false
 VALUE=""
 
-while [ "$#" -gt 0 ]; do
+while [[ "$#" -gt 0 ]]; do
     case "$1" in
         -c)
             shift
@@ -39,9 +39,9 @@ while [ "$#" -gt 0 ]; do
 done
 
 # Handle list mode
-if [ "$LIST_MODE" = "true" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
-    if [ "$XDG_CURRENT_DESKTOP" = "XFCE" ]; then
-        if [ "$MOCK_XFCONF_EMPTY" = "true" ]; then
+if [[ "$LIST_MODE" = "true" ]] && [[ "$CHANNEL" = "xfce4-desktop" ]]; then
+    if [[ "$XDG_CURRENT_DESKTOP" = "XFCE" ]]; then
+        if [[ "$MOCK_XFCONF_EMPTY" = "true" ]]; then
             # Return nothing to simulate no properties
             exit 0
         else
@@ -55,14 +55,14 @@ if [ "$LIST_MODE" = "true" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
 fi
 
 # Handle set property mode (existing property)
-if [ -n "$PROPERTY" ] && [ -n "$VALUE" ] && [ "$CREATE_MODE" = "false" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
+if [[ -n "$PROPERTY" ]] && [[ -n "$VALUE" ]] && [[ "$CREATE_MODE" = "false" ]] && [[ "$CHANNEL" = "xfce4-desktop" ]]; then
     # Simulate setting an existing property
     exit 0
 fi
 
 # Handle create property mode
-if [ -n "$PROPERTY" ] && [ -n "$VALUE" ] && [ "$CREATE_MODE" = "true" ] && [ "$CHANNEL" = "xfce4-desktop" ]; then
-    if [ "$MOCK_XFCONF_FAIL_CREATE" = "true" ]; then
+if [[ -n "$PROPERTY" ]] && [[ -n "$VALUE" ]] && [[ "$CREATE_MODE" = "true" ]] && [[ "$CHANNEL" = "xfce4-desktop" ]]; then
+    if [[ "$MOCK_XFCONF_FAIL_CREATE" = "true" ]]; then
         exit 1
     fi
     # Simulate creating a new property successfully

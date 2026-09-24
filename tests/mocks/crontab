@@ -5,24 +5,26 @@ MOCK_FILE="$HOME/crontab.mock"
 LOG_FILE="$HOME/crontab.log"
 
 log() {
-    echo "$1" >> "$LOG_FILE"
+    local message="$1"
+    echo "$message" >> "$LOG_FILE"
+    return 0
 }
 
-if [ "$1" == "-l" ]; then
-    if [ -f "$MOCK_FILE" ]; then
+if [[ "$1" == "-l" ]]; then
+    if [[ -f "$MOCK_FILE" ]]; then
         cat "$MOCK_FILE"
     else
         # Return nothing (empty) if no crontab exists
         true
     fi
-elif [ "$1" == "-" ]; then
+elif [[ "$1" == "-" ]]; then
     # Read from stdin
     cat > "$MOCK_FILE"
     log "Updated crontab:"
     cat "$MOCK_FILE" >> "$LOG_FILE"
 else
     # Handle direct file argument if any (not used by installer but good for completeness)
-    if [ -f "$1" ]; then
+    if [[ -f "$1" ]]; then
         cp "$1" "$MOCK_FILE"
     fi
 fi

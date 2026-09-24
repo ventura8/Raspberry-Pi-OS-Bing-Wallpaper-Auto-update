@@ -14,7 +14,7 @@ The detailed documentation has been split into multiple files for easier navigat
   - Testing framework, coverage requirements, and badge generation.
 - [Development Standards](development_standards.md)
   - Environment setup, coding standards, and mandatory requirements.
-- [Release notes](releases/v1.0.2.md) (prior: [v1.0.1](releases/v1.0.1.md))
+- [Release notes](releases/v1.0.3.md) (prior: [v1.0.2](releases/v1.0.2.md), [v1.0.1](releases/v1.0.1.md))
   - GitHub-ready release descriptions and release notes.
 - [AI Rules](../.agent/ai_rules.md)
   - **For AI Agents**: Lint/test priority, coverage requirements, cross-platform

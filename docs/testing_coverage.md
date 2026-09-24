@@ -42,6 +42,9 @@ This script:
 The CI pipeline will **fail** if coverage drops below 90%. This threshold is enforced in:
 
 - `.github/workflows/ci.yml` (explicit threshold check: `>= 90%`)
+
+CI also converts the merged report to SonarQube generic coverage with
+`scripts/cobertura_to_sonar.py` and uploads it to SonarQube Cloud.
 - Local test runs will generate a warning if below 90%
 
 ### Coverage Badge Generation

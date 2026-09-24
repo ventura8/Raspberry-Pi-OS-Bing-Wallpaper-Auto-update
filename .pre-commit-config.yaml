@@ -8,20 +8,20 @@ repos:
       - id: check-yaml
 
   - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.10.0
+    rev: v0.11.0
     hooks:
       - id: shellcheck
         files: ^(bing_wallpaper\.sh|install\.sh|uninstall\.sh|tests/.*\.sh|scripts/.*\.sh)$
 
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.8.0-1
+    rev: v3.14.1-1
     hooks:
       - id: shfmt
         args: [-i, "2", -ci]
         files: ^(bing_wallpaper\.sh|install\.sh|uninstall\.sh|tests/.*\.sh|scripts/.*\.sh)$
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.4
+    rev: v0.16.8
     hooks:
       - id: ruff-check
         args: [--fix]
@@ -45,6 +45,6 @@ repos:
         files: ^Dockerfile$
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.2
+    rev: v0.23.3
     hooks:
       - id: markdownlint-cli2

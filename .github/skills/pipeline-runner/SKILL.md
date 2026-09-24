@@ -11,7 +11,9 @@ skill. Keep both in sync when CI stages or commands change.
 ## Objective
 
 Reproduce `.github/workflows/ci.yml` locally: quality gate → installer/component/
-system bats suites → kcov merge → 90% coverage threshold → badge refresh.
+system bats suites → kcov merge → 90% coverage threshold → badge refresh →
+SonarQube generic coverage (`scripts/cobertura_to_sonar.py`). The SonarQube Cloud
+scan itself runs only in CI (`sonarqube` job, `SONAR_TOKEN` secret).
 
 ## Entry point
 
