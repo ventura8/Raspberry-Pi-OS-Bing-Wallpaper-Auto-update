@@ -64,6 +64,10 @@ Copilot surface would otherwise drift.
   `ruff check`, `mypy` (strict, see `pyproject.toml`, line-length 140).
 - **YAML**: `yamllint` over the workflow and lint-config files.
 - **Dockerfile**: `hadolint`.
+- **Static analysis**: SonarQube Cloud runs in CI (`sonarqube` job). Fix new issues at the
+  root cause — e.g. prefer `[[ ]]` over `[ ]`, end functions with an explicit `return`,
+  copy positional parameters into locals, send error messages to stderr — and never mark
+  issues as won't-fix to get the quality gate green.
 - **Markdown**: `markdownlint-cli2` over agent/docs Markdown.
 - **Failure handling**: do not hide, suppress, or downgrade real failures. The
   wallpaper, install, and uninstall scripts must report real errors and exit
@@ -84,6 +88,13 @@ docker run --rm --security-opt seccomp=unconfined --cap-add SYS_PTRACE \
   wallpaper-test ./tests/run_suite.sh
 ```
 
+The test image runs as the unprivileged user **uid 1001**, which matches the GitHub-hosted
+runner. Bind-mounted output directories (`coverage/`, `coverage_inputs/*`) must be writable
+by that uid. On Windows and macOS (Docker Desktop) this works automatically. On native
+Linux with a different uid, give the directory to uid 1001 first (for example
+`sudo chown 1001:1001 coverage`), or pass `--user 0` for a one-off write such as
+`ruff format`. Do not reintroduce `chmod 777` in CI.
+
 Windows / full host orchestration:
 
 ```powershell
@@ -99,7 +110,7 @@ Windows / full host orchestration:
 | `bing_wallpaper.sh` | Fetch, name, save, and apply the daily Bing wallpaper. |
 | `install.sh` | Interactive installer: region/resolution prompts, cron wiring, first run. |
 | `uninstall.sh` | Remove installed script, log, and crontab entry. |
-| `Dockerfile` | Pinned Debian trixie-slim test image (bats, kcov, shellcheck, shfmt, ruff, mypy, yamllint, hadolint, markdownlint-cli2). |
+| `Dockerfile` | Digest-pinned Debian trixie-slim test image over an HTTPS Debian snapshot (bats, kcov, shellcheck, shfmt, ruff, mypy, yamllint, hadolint, markdownlint-cli2); runs as non-root uid 1001. |
 | `tests/*.bats` | `bing_wallpaper_test.bats`, `install_test.bats`, `uninstall_test.bats`, `e2e_tests.bats`. |
 | `tests/run_suite.sh` | bats runner; `--file`, `--installer-only`, `--maintenance-only/--component-only`, `--e2e-only`. Wraps in `kcov` when `COVERAGE=1`. |
 | `tests/run_coverage.sh` | Single-shot local coverage run producing `coverage/cobertura.xml`. |
@@ -108,6 +119,8 @@ Windows / full host orchestration:
 | `tests/mocks/` | Deterministic stand-ins for `curl`, `crontab`, `pcmanfm`, `pgrep`, `xfconf-query`, `xrandr`. |
 | `scripts/quality_checks.sh` | Canonical quality gate; mirrors the CI `quality-gates` job. |
 | `scripts/check_line_length.py` | Enforces the 140-char non-Markdown policy. |
+| `scripts/cobertura_to_sonar.py` | Converts merged kcov Cobertura XML to SonarQube generic coverage (`coverage/sonar-coverage.xml`). |
+| `sonar-project.properties` | SonarQube Cloud project config (org `ventura8`, sources/tests split, coverage report path). |
 | `scripts/local/*.ps1` | Windows-host quality/test/coverage orchestration (build image, run gates). |
 | `assets/coverage.svg` | Locally generated coverage badge (commit after coverage-affecting changes). |
 | `docs/Instructions.md` | Setup / build / contribute guide. |
@@ -117,7 +130,7 @@ Windows / full host orchestration:
 | `docs/development_standards.md` | Style/testing/CI standards reference. |
 | `docs/releases/vX.Y.Z.md` | Per-release notes; GitHub Release body source. Authored via the `prepare-release` skill. |
 | `VERSION` | Single source of truth for the released semver (`vN.N.N`). Read by `.github/workflows/release.yml` to validate a pushed tag. |
-| `.github/workflows/ci.yml` | GHA: `quality-gates` → `unit-tests` / `component-tests` / `system-tests` → `coverage-report` (merge + threshold + summary). |
+| `.github/workflows/ci.yml` | GHA: `quality-gates` → `unit-tests` / `component-tests` / `system-tests` → `coverage-report` (merge + threshold + summary + Sonar coverage) → `sonarqube` (SonarQube Cloud scan, needs `SONAR_TOKEN` secret). Actions are pinned to commit SHAs. |
 | `.github/workflows/release.yml` | GHA: on `v*` tag push — validates `VERSION` matches the tag and `docs/releases/<tag>.md` exists, then creates the GitHub Release from those notes. |
 
 ## Dependency & Mocking Policy

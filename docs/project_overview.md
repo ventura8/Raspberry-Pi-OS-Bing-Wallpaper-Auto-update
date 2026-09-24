@@ -17,6 +17,7 @@ The **Bing Wallpaper for Raspberry Pi** is a lightweight utility that automatica
 ├── install.sh             # Interactive installer
 ├── uninstall.sh           # Uninstaller script
 ├── Dockerfile             # Docker image for testing
+├── sonar-project.properties # SonarQube Cloud analysis config
 ├── tests/                 # BATS test suites
 │   ├── bing_wallpaper_test.bats
 │   ├── install_test.bats
@@ -32,7 +33,9 @@ The **Bing Wallpaper for Raspberry Pi** is a lightweight utility that automatica
 │   └── coverage.svg       # Coverage badge (locally generated)
 ├── .github/
 │   └── workflows/
-│       └── ci.yml         # GitHub Actions CI pipeline
+│       ├── ci.yml         # GitHub Actions CI pipeline (incl. SonarQube Cloud scan)
+│       └── release.yml    # Tag-triggered GitHub Release
+├── scripts/cobertura_to_sonar.py        # kcov Cobertura -> SonarQube generic coverage
 ├── scripts/local/run_tests_local.ps1    # Local test runner (Windows)
 ├── scripts/local/run_coverage_local.ps1 # Simple coverage runner (Windows)
 └── README.md

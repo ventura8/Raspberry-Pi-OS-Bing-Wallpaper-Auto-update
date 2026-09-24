@@ -12,7 +12,7 @@ setup() {
 
     # Add mocks to PATH
     # We prepend tests/mocks to PATH so our mock 'curl' is used instead of system 'curl'
-    chmod +x "$PROJECT_ROOT/tests/mocks/curl"
+    [[ -x "$PROJECT_ROOT/tests/mocks/curl" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/curl"
     export PATH="$PROJECT_ROOT/tests/mocks:$PATH"
 
     # Verify mock is working
@@ -241,7 +241,7 @@ EOF
 @test "Updates XFCE wallpaper when XDG_CURRENT_DESKTOP is XFCE" {
     # Setup mock environment
     export XDG_CURRENT_DESKTOP="XFCE"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xfconf-query" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
 
     run bash "$PROJECT_ROOT/bing_wallpaper.sh"
 
@@ -257,8 +257,8 @@ EOF
     # Setup mock environment
     export XDG_CURRENT_DESKTOP="XFCE"
     export MOCK_XFCONF_EMPTY="true"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xrandr"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xfconf-query" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xrandr" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xrandr"
 
     run bash "$PROJECT_ROOT/bing_wallpaper.sh"
 
@@ -275,8 +275,8 @@ EOF
     export XDG_CURRENT_DESKTOP="XFCE"
     export MOCK_XFCONF_EMPTY="true"
     export MOCK_XRANDR_EMPTY="true"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xrandr"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xfconf-query" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xrandr" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xrandr"
 
     run bash "$PROJECT_ROOT/bing_wallpaper.sh"
 
@@ -293,7 +293,7 @@ EOF
     export XDG_CURRENT_DESKTOP="XFCE"
     export MOCK_XFCONF_EMPTY="true"
     export MOCK_XFCONF_FAIL_CREATE="true"
-    chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
+    [[ -x "$PROJECT_ROOT/tests/mocks/xfconf-query" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/xfconf-query"
 
     run bash "$PROJECT_ROOT/bing_wallpaper.sh"
 

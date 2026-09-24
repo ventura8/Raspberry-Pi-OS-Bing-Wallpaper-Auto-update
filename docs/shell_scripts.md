@@ -59,6 +59,13 @@ Interactive installer that:
 
 The installer checks for existing installations and offers to update settings rather than reinstall.
 
+### End of Input
+
+If a prompt reaches end of input (for example `bash install.sh < /dev/null`), the installer
+prints `Error: No input received` to stderr and exits with status 1 before writing a crontab
+entry. `uninstall.sh` behaves the same way before removing anything. A final answer
+without a trailing newline still counts as input.
+
 ## uninstall.sh
 
 Clean removal script that:

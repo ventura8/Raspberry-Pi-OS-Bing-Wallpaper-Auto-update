@@ -62,6 +62,10 @@ cp "$merged_xml" coverage/cobertura.xml
 docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
   python3 tests/transform_coverage.py coverage/cobertura.xml
 
+# SonarQube Cloud generic coverage (CI uploads this to the sonarqube job)
+docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
+  python3 scripts/cobertura_to_sonar.py coverage/cobertura.xml coverage/sonar-coverage.xml
+
 docker run --rm -v "$PWD:/workdir" -w /workdir wallpaper-test \
   python3 tests/generate_summary.py coverage/cobertura.xml | tee coverage-summary.md
 ```

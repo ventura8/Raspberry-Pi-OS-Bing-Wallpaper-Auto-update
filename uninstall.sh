@@ -8,6 +8,7 @@
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}Starting Bing Wallpaper Uninstallation...${NC}"
@@ -16,11 +17,23 @@ echo -e "${BLUE}Starting Bing Wallpaper Uninstallation...${NC}"
 ask_user() {
   local prompt="$1"
   local var_name="$2"
-  if [ -z "$FORCE_STDIN" ] && [ -c /dev/tty ]; then
+  if [[ -z "$FORCE_STDIN" ]] && [[ -c /dev/tty ]]; then
     read -r -p "$prompt" "${var_name?}" </dev/tty
   else
     read -r -p "$prompt" "${var_name?}"
   fi
+  local read_status=$?
+  # A last line without a trailing newline still counts as an answer
+  if [[ "$read_status" -ne 0 ]] && [[ -z "${!var_name}" ]]; then
+    return "$read_status"
+  fi
+  return 0
+}
+
+# Abort when a prompt hits end of input instead of silently using defaults
+input_closed() {
+  echo -e "${RED}Error: No input received (end of input). Aborting.${NC}" >&2
+  exit 1
 }
 
 # Define paths
@@ -29,7 +42,7 @@ SCRIPT_FILE="$INSTALL_DIR/bing_wallpaper.sh"
 LOG_FILE="$INSTALL_DIR/wallpaper.log"
 
 # Interactive confirmation
-ask_user "Are you sure you want to remove Bing Wallpaper and its scheduled tasks? (y/N): " CONFIRM
+ask_user "Are you sure you want to remove Bing Wallpaper and its scheduled tasks? (y/N): " CONFIRM || input_closed
 
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
   echo -e "${YELLOW}Uninstallation cancelled.${NC}"
@@ -40,14 +53,14 @@ fi
 # ---------------
 echo -e "${BLUE}Removing files...${NC}"
 
-if [ -f "$SCRIPT_FILE" ]; then
+if [[ -f "$SCRIPT_FILE" ]]; then
   rm "$SCRIPT_FILE"
   echo -e "${GREEN}Removed script: $SCRIPT_FILE${NC}"
 else
   echo -e "${YELLOW}Script not found: $SCRIPT_FILE${NC}"
 fi
 
-if [ -f "$LOG_FILE" ]; then
+if [[ -f "$LOG_FILE" ]]; then
   rm "$LOG_FILE"
   echo -e "${GREEN}Removed log file: $LOG_FILE${NC}"
 else
@@ -56,9 +69,9 @@ fi
 
 # Optional: Remove directory if empty?
 # Only if it's exactly the install dir and empty.
-if [ -d "$INSTALL_DIR" ]; then
+if [[ -d "$INSTALL_DIR" ]]; then
   # count files
-  if [ -z "$(ls -A "$INSTALL_DIR")" ]; then
+  if [[ -z "$(ls -A "$INSTALL_DIR")" ]]; then
     rmdir "$INSTALL_DIR"
     echo -e "${GREEN}Removed empty directory: $INSTALL_DIR${NC}"
   else

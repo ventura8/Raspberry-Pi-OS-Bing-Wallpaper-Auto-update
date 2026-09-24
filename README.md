@@ -1,7 +1,8 @@
 # **🍓 Bing Wallpaper for Raspberry Pi**
 
 ![Language](https://img.shields.io/badge/Language-Shell-blue) ![Coverage](assets/coverage.svg)
-[![Release](https://img.shields.io/badge/release-v1.0.2-blue.svg)](docs/releases/v1.0.2.md)
+[![Release](https://img.shields.io/badge/release-v1.0.3-blue.svg)](docs/releases/v1.0.3.md)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ventura8_Raspberry-Pi-OS-Bing-Wallpaper-Auto-update&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ventura8_Raspberry-Pi-OS-Bing-Wallpaper-Auto-update)
 
 **Auto-magically set the "Bing Wallpaper of the Day" as your Raspberry Pi desktop background.**
 
@@ -139,6 +140,7 @@ Alternatively, advanced users can edit the schedule manually:
 * **Linting & Formatting:** Mandatory checks include `shfmt`, `shellcheck`, `ruff`, `mypy`, `yamllint`, `hadolint`, and `markdownlint-cli2`.
 * **Line Length:** All non-Markdown source/config files are limited to 140 characters per line.
 * **Testing:** BATS (Bash Automated Testing System) is used for testing.
+* **Static Analysis:** CI runs a [SonarQube Cloud](https://sonarcloud.io/project/overview?id=ventura8_Raspberry-Pi-OS-Bing-Wallpaper-Auto-update) scan (config in `sonar-project.properties`) with merged kcov coverage. It needs a `SONAR_TOKEN` repository secret.
 
 ### **Testing & Coverage**
 

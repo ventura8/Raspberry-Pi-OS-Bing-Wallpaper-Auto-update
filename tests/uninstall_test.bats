@@ -16,7 +16,7 @@ setup() {
     touch "$HOME/scripts/wallpaper.log"
 
     # Add mocks to PATH
-    chmod +x "$PROJECT_ROOT/tests/mocks/crontab"
+    [[ -x "$PROJECT_ROOT/tests/mocks/crontab" ]] || chmod +x "$PROJECT_ROOT/tests/mocks/crontab"
     export PATH="$PROJECT_ROOT/tests/mocks:$PATH"
 
     # Verify crontab mock
@@ -115,4 +115,12 @@ teardown() {
     run bash "$PROJECT_ROOT/uninstall.sh" <<< "y"
     [ "$status" -eq 0 ]
     [[ "$output" == *"No crontab entry found"* ]]
+}
+
+@test "Uninstaller exits nonzero and keeps files when input is closed" {
+    run bash "$PROJECT_ROOT/uninstall.sh" < /dev/null
+
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"No input received"* ]]
+    [ -f "$HOME/scripts/bing_wallpaper.sh" ]
 }

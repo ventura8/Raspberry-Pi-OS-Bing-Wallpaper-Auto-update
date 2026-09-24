@@ -28,8 +28,8 @@ kcov \
 echo "Searching for cobertura.xml..."
 find "$COVERAGE_DIR" -name cobertura.xml -exec cp {} "$COVERAGE_DIR/cobertura.xml" \;
 
-if [ ! -f "$COVERAGE_DIR/cobertura.xml" ]; then
-  echo "FAILED to move cobertura.xml"
+if [[ ! -f "$COVERAGE_DIR/cobertura.xml" ]]; then
+  echo "FAILED to move cobertura.xml" >&2
   exit 1
 fi
 

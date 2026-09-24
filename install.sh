@@ -17,11 +17,23 @@ echo -e "${BLUE}Starting Fully Automated Bing Wallpaper Installation...${NC}"
 ask_user() {
   local prompt="$1"
   local var_name="$2"
-  if [ -z "$FORCE_STDIN" ] && [ -c /dev/tty ]; then
+  if [[ -z "$FORCE_STDIN" ]] && [[ -c /dev/tty ]]; then
     read -r -p "$prompt" "${var_name?}" </dev/tty
   else
     read -r -p "$prompt" "${var_name?}"
   fi
+  local read_status=$?
+  # A last line without a trailing newline still counts as an answer
+  if [[ "$read_status" -ne 0 ]] && [[ -z "${!var_name}" ]]; then
+    return "$read_status"
+  fi
+  return 0
+}
+
+# Abort when a prompt hits end of input instead of silently using defaults
+input_closed() {
+  echo -e "${RED}Error: No input received (end of input). Aborting.${NC}" >&2
+  exit 1
 }
 
 # 1. Setup Directories
@@ -36,7 +48,7 @@ SCRIPT_URL="https://raw.githubusercontent.com/ventura8/Raspberry-Pi-OS-Bing-Wall
 
 echo -e "Downloading latest script to ${INSTALL_DIR}/bing_wallpaper.sh..."
 if ! curl -s -o "$INSTALL_DIR/bing_wallpaper.sh" "$SCRIPT_URL"; then
-  echo -e "${RED}Error: Could not download script. Check your internet connection.${NC}"
+  echo -e "${RED}Error: Could not download script. Check your internet connection.${NC}" >&2
   exit 1
 fi
 
@@ -49,10 +61,10 @@ echo -e "${GREEN}Script installed and permissions set.${NC}"
 # --------------------
 echo -e "${BLUE}Configuring Bing Region...${NC}"
 DEFAULT_REGION="en-WW"
-ask_user "Enter Bing Region code (Default: en-WW, options: en-US, ja-JP, etc.): " USER_REGION
+ask_user "Enter Bing Region code (Default: en-WW, options: en-US, ja-JP, etc.): " USER_REGION || input_closed
 
 # Use default if input is empty
-if [ -z "$USER_REGION" ]; then
+if [[ -z "$USER_REGION" ]]; then
   USER_REGION="$DEFAULT_REGION"
 fi
 
@@ -86,28 +98,28 @@ fi
 
 # Ask user for custom time
 echo -e "Default update time is ${YELLOW}10:00 AM${NC}."
-ask_user "Do you want to set a custom update time? (y/N): " CUSTOM_TIME
+ask_user "Do you want to set a custom update time? (y/N): " CUSTOM_TIME || input_closed
 
 if [[ "$CUSTOM_TIME" =~ ^[Yy]$ ]]; then
   # Get Hour
   while true; do
-    ask_user "Enter Hour (0-23): " INPUT_HOUR
-    if [[ "$INPUT_HOUR" =~ ^[0-9]+$ ]] && [ "$INPUT_HOUR" -ge 0 ] && [ "$INPUT_HOUR" -le 23 ]; then
+    ask_user "Enter Hour (0-23): " INPUT_HOUR || input_closed
+    if [[ "$INPUT_HOUR" =~ ^[0-9]+$ ]] && ((10#$INPUT_HOUR <= 23)); then
       CRON_HOUR=$INPUT_HOUR
       break
     else
-      echo -e "${RED}Invalid hour. Please enter a number between 0 and 23.${NC}"
+      echo -e "${RED}Invalid hour. Please enter a number between 0 and 23.${NC}" >&2
     fi
   done
 
   # Get Minute
   while true; do
-    ask_user "Enter Minute (0-59): " INPUT_MINUTE
-    if [[ "$INPUT_MINUTE" =~ ^[0-9]+$ ]] && [ "$INPUT_MINUTE" -ge 0 ] && [ "$INPUT_MINUTE" -le 59 ]; then
+    ask_user "Enter Minute (0-59): " INPUT_MINUTE || input_closed
+    if [[ "$INPUT_MINUTE" =~ ^[0-9]+$ ]] && ((10#$INPUT_MINUTE <= 59)); then
       CRON_MINUTE=$INPUT_MINUTE
       break
     else
-      echo -e "${RED}Invalid minute. Please enter a number between 0 and 59.${NC}"
+      echo -e "${RED}Invalid minute. Please enter a number between 0 and 59.${NC}" >&2
     fi
   done
 fi

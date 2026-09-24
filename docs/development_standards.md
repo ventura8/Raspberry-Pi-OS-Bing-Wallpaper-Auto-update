@@ -28,7 +28,7 @@
 
 ### Quality Toolchain
 
-- Shell: `shfmt`, `shellcheck`
+- Shell: `shfmt` (v3.14.1), `shellcheck` (v0.11.0); both installed as checksummed release binaries in the `Dockerfile`
 - Python: `ruff format --check`, `ruff check`, `mypy`
 - YAML: `yamllint`
 - Dockerfile: `hadolint`
@@ -95,7 +95,15 @@ The GitHub Actions CI pipeline (`.github/workflows/ci.yml`) runs:
 2. **Unit Tests**: Install/uninstall test suites
 3. **Component Tests**: Wallpaper script tests
 4. **System Tests**: End-to-end integration tests
-5. **Coverage Report**: Merged report with 90% minimum threshold
+5. **Coverage Report**: Merged report with 90% minimum threshold; also converts it to
+   SonarQube generic coverage (`scripts/cobertura_to_sonar.py` → `coverage/sonar-coverage.xml`)
+6. **SonarQube Cloud Analysis**: Scans the repo with `SonarSource/sonarqube-scan-action`
+   using `sonar-project.properties` and the `SONAR_TOKEN` repository secret. The job waits
+   for the quality gate and fails when it fails. Skipped for
+   pull requests from forks, which cannot read secrets.
+
+Test containers run as uid 1001 (non-root) with no `chmod 777` on mounted directories.
+All third-party actions are pinned to full commit SHAs with the version in a trailing comment.
 
 ### CI Coverage Enforcement
 
